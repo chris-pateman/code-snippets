@@ -1,10 +1,18 @@
 ## Input Examples
 locals {
+<<<<<<< HEAD
   apim_name                = "cpexampleapim"
   apim_resource_group_name = "cp-example-rg"
   api_name_prefix          = "cp-api-example"
   api_version              = "1.6.0"
   version_count_to_keep    = 5
+=======
+  apim_name = "cpexampleapim"
+  apim_resource_group_name = "cp-example-rg"
+  api_name_prefix       = "cp-api-example"
+  api_version = "1.6.0"
+  version_count_to_keep = 5
+>>>>>>> main
 }
 
 data "azurerm_api_management" "apim" {
@@ -52,12 +60,12 @@ locals {
 }
 
 resource "azurerm_api_management_api" "api" {
-  for_each = local.todeploy_api_versions
-
-  name                = "${local.api_name_prefix}-${replace(each.key, ".", "-")}"
+  for_each              = local.todeploy_api_versions
+  
+  name                  = "${local.api_name_prefix}-${replace(each.key, ".", "-")}"
   resource_group_name = local.apim_resource_group_name
   api_management_name = local.apim_name
-  revision            = "1"
+  revision              = "1"
 
   version        = each.key
   version_set_id = azurerm_api_management_api_version_set.set.id

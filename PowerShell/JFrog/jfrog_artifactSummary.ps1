@@ -1,13 +1,13 @@
 
-$jfUser = "999999"
-$jfPassword = "******************"
+$jfUser = $env:JFROG_USERNAME
+$jfPassword = $env:JFROG_PASSWORD
 
 $thresholdCritial = 1
 $thresholdHigh = 4
 $thresholdMedium = 10
 $thresholdLow = 15
 
-$jfUrl = "binarycentral.jfrog.io"
+$jfUrl = $env:JFROG_URL
 $jfUri = "/xray/api/v1/summary/artifact"
 
 $paths = "General/docker-sitecore-local/sitecore-xp1-cd-10.1.2-ltsc2019/0.1.102/manifest.json"#,General/docker-sitecore-local/sitecore-xp1-cm-10.1.2-ltsc2019/0.1.102/manifest.json,General/docker-sitecore-local/sitecore-id6-10.1.2-ltsc2019/0.1.102/manifest.json"
