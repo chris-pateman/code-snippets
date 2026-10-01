@@ -1,8 +1,8 @@
 
-$jfUser = "999999"
-$jfPassword = "*************"
+$jfUser = $env:JFROG_USERNAME
+$jfPassword = $env:JFROG_PASSWORD
 
-$jfUrl = "binarycentral.jfrog.io"
+$jfUrl = $env:JFROG_URL
 $jfUri = "/artifactory"
 $paths = @("docker-sitecore-local/sitecore-xp1-cd-10.1.2-ltsc2019/CI-1.4.60")
 
