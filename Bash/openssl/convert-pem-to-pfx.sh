@@ -1,21 +1,21 @@
 
 
-sslPath="/mnt/c/Users/patemanc/pateman.workspace/CodeSnippets/snippets/Azure/PowerShell/kv/certs/generated/LE_PROD/353081880/cp-recording.sandbox.platform.cp.net"
-testSslPath="./\test-area\cert"
+sslPath="${SSL_PATH:?Set SSL_PATH to the certificate directory}"
+testSslPath="${TEST_SSL_PATH:-./test-area/cert}"
 
 
-psGenPath="/mnt/c/Users/patemanc/pateman.workspace/CodeSnippets/snippets/Azure/PowerShell/kv/certs/generated"
+psGenPath="${CERT_OUTPUT_PATH:-./generated}"
 
-output="/mnt/c/Users/patemanc/pateman.workspace/CodeSnippets/snippets/Bash/openssl/generated"
-jksPass="phu3rtq5Ut_TbAm0LI1hyr5hs%hK3Jhu"
+output="${OUTPUT_PATH:-./generated}"
+jksPass="${PFX_PASSWORD:?Set PFX_PASSWORD before running this script}"
 
 openssl pkcs12 -export -out "$psGenPath/fullchain-withkey.pfx" -in "$psGenPath/fullchain-withkey.pem" -passin pass: -passout pass:${jksPass}
 
-sslPath="/mnt/c/Users/patemanc/pateman.workspace/CodeSnippets/snippets/Azure/PowerShell/kv/certs/generated/LE_PROD/353081880/cp-recording.sandbox.platform.cp.net"
+sslPath="${SSL_PATH:?Set SSL_PATH to the certificate directory}"
 certFile="${sslPath}/cert.cer"
 intermediateFile="${sslPath}/chain1.cer"
 privateKeyFile="${sslPath}/cert.key"
-password="poshacme"
+password="${PFX_PASSWORD:?Set PFX_PASSWORD before running this script}"
 
 outputPfx="output.pfx"
 outputPem="chainCert.pem"

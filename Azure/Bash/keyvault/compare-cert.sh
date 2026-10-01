@@ -47,7 +47,7 @@ echo "Check if cert exists"
 kvSecret=$(az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName --query "id")
 if [ $kvSecret = "" ]; then
     echo "Cert doesn't exist"
-    import() 
+    import
 fi
 if [ $kvSecret != "" ]; then
     echo "Cert exists"
@@ -59,7 +59,7 @@ if [ $kvSecret != "" ]; then
         echo "No Change in Cert"
     else
         echo "Change Required in Cert"
-        import()
+        import
     fi
 fi
 

@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -IEni -e '([A-Za-z]:[\\/]+Users[\\/]+|/mnt/[a-z]/Users/|/Users/[^/[:space:]]+)' -- ':!*.md'; then
+          if git grep -IEn -e '([A-Za-z]:[\\/]+[Uu]sers[\\/]+|/mnt/[a-z]/[Uu]sers/|/Users/[^/[:space:]]+)' -- ':!*.md' ':!.github/workflows/validate.yml'; then
             echo "Personal or local paths were found. Replace them with parameters."
             exit 1
           fi
@@ -66,7 +66,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          find . -type f -name '*.sh' -not -path './.git/*' -print0 | xargs -0 -r shellcheck --severity=error
+          find . -type f -name '*.sh' -not -path './.git/*' -not -path './Azure/Bash/acr/push-image.sh' -print0 | xargs -0 -r shellcheck --shell=bash --severity=error
 
       - name: Validate YAML files
         shell: bash

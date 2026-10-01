@@ -1,6 +1,6 @@
 
 application="audiostream1"
-audioFilePath="/mnt/c/Users/patemanc/pateman.workspace/CodeSnippets/snippets/PowerShell/ffmpeg/audio-example.mp4"
+audioFilePath="${AUDIO_FILE_PATH:-./audio-example.mp4}"
 fileName="test-stream"
 source="127.0.0.1"
 

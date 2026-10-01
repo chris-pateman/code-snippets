@@ -2,8 +2,8 @@ keyVaultName="cp-sbox-kv"
 certName="cp-sbox-le-cert"
 domain="cp-recording.sandbox.platform.cp.net"
 
-jksPath="/mnt/c/Users/patemanc/pateman.workspace/CodeSnippets/snippets/Bash/keytool/generated/exported.jks"
-jksPass="poshacme"
+jksPath="${JKS_PATH:-./generated/exported.jks}"
+jksPass="${JKS_PASSWORD:?Set JKS_PASSWORD before running this script}"
 pfxPath="generated/cert.pfx"
 
 expiryDate=$(keytool -list -v -keystore $jksPath -storepass $jksPass | grep until | sed 's/.*until: //')

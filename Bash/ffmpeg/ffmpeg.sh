@@ -1,6 +1,6 @@
 
 application="audiostream1"
-audioFilePath="/mnt/c/Users/patemanc/pateman.workspace/test-area/cpexample.mp4"
+audioFilePath="${AUDIO_FILE_PATH:-./audio-example.mp4}"
 fileName="new-licence"
 
 ## _________________________ ##
