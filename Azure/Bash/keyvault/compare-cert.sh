@@ -1,10 +1,10 @@
 
 
-kvName="cp-sbox-kv"
-oid=$(oid)
-env="sbox"
-certName="STAR-sandbox-platform-cp-net"
-kvNamePrefix="cpapps"
+kvName="${KEY_VAULT_NAME:?Set KEY_VAULT_NAME before running this script}"
+oid="${OBJECT_ID:-}"
+env="${ENVIRONMENT:-sbox}"
+certName="${CERT_NAME:?Set CERT_NAME before running this script}"
+kvNamePrefix="${KEY_VAULT_PREFIX:-cpapps}"
 sourceKvName="$kvNamePrefix-$env"
 echo "Logged in as oid $oid"
 
@@ -24,19 +24,6 @@ if cmp -s "$cpappsCert" "$cpCert"; then
 else
     printf 'The file "%s" is different from "%s"\n' "$cpappsCert" "$cpCert"
 fi
-
-kvName="$(kvName)"
-oid=$(oid)
-env="${{ parameters.env }}"
-certName="${{ parameters.certName }}"
-kvNamePrefix="$(kv_name_prefix)"
-sourceKvName="$kvNamePrefix-$env"
-echo "Logged in as oid $oid"
-
-echo "Copy wildcard cert from cpapps"
-az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert.pfx
-
-base64 -d cert.pfx > cert-up.pfx
 
 import(){
     echo "Import the cert to our new KV $kvName"
