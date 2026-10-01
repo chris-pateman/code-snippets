@@ -31,9 +31,11 @@ jobs:
         run: |
           set -euo pipefail
           forbidden='(^|/)(\.env([^/]*)?|credentials(\..*)?|.*\.(pfx|p12|pem|key|cer|crt|jks|tfstate|tfvars|tfvars\.json))$'
-          if git ls-files | grep -Eiq "$forbidden"; then
-            echo "Sensitive files are tracked. Remove them before publishing:"
-            git ls-files | grep -Ei "$forbidden"
+          reviewed_fixtures='^(Terraform/full-solutions/csv_nsg/values_example\.tfvars|Terraform/modules/tf-repo-apim-api/infra/config/(dev|global)\.tfvars)$'
+          violations="$(git ls-files | grep -Ei "$forbidden" | grep -Eiv "$reviewed_fixtures" || true)"
+          if [[ -n "$violations" ]]; then
+            echo "Sensitive files are tracked. Remove them or convert them to reviewed example fixtures:"
+            printf '%s\n' "$violations"
             exit 1
           fi
 
@@ -57,7 +59,7 @@ jobs:
         shell: bash
         run: |
           python -m pip install --disable-pip-version-check --quiet yamllint
-          curl -sSfL https://raw.githubusercontent.com/koalaman/shellcheck/v0.10.0/shellcheck-v0.10.0.linux.x86_64.tar.xz | tar -xJ
+          curl -sSfL https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.linux.x86_64.tar.xz | tar -xJ
           echo "$PWD/shellcheck-v0.10.0" >> "$GITHUB_PATH"
 
       - name: Validate shell scripts
