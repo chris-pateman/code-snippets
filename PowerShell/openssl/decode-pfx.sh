@@ -1,1 +1,1 @@
-openssl pkcs12 -info -in "/mnt/c/Users/patemanc/AppData/Local/Temp/1/cert-20220105.pfx.txt"
+openssl pkcs12 -info -in "${PFX_PATH:?Set PFX_PATH to the certificate file}"

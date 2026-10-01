@@ -1,3 +1,3 @@
-sslPath="/mnt/c/Users/patemanc/pateman.workspace/CodeSnippets/snippets/Azure/PowerShell/kv/certs/generated/LE_STAGE/39660938/cp-recording.sandbox.platform.cp.net"
+sslPath="${SSL_PATH:?Set SSL_PATH to the certificate directory}"
 
 openssl x509 -inform der -in "$sslPath/fullchain.cer" -out "$sslPath/cert.pem" 

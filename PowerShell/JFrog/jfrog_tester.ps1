@@ -1,8 +1,8 @@
 
-$jfUser = "9999999"
-$jfPassword = "************"
+$jfUser = $env:JFROG_USERNAME
+$jfPassword = $env:JFROG_PASSWORD
 
-$jfUrl = "binarycentral.jfrog.io"
+$jfUrl = $env:JFROG_URL
 $jfUri = "/artifactory/api/system/version"
 
 

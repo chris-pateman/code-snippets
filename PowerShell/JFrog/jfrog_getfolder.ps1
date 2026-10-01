@@ -1,27 +1,26 @@
 
-$jfUser = "99999"
-$jfPassword = "********"
-
-$jfUrl = "binarycentral.jfrog.io"
+$jfUser = $env:JFROG_USERNAME
+$jfPassword = $env:JFROG_PASSWORD
+$jfUrl = $env:JFROG_URL
 $jfUri = "/artifactory/api/storage"
-$paths = @("docker-sitecore-local/sitecore-xp1-cd-10.1.2-ltsc2019/0.1.80")
+$paths = @("docker-sitecore-local/sitecore-xp1-cd-10.1.2-ltsc2019")
 
-foreach ($path in $paths ){
-    
-
-$jfToken = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $jfUser, $jfPassword)))
-
-$fullUrl = "https://$jfUrl$jfUri/$path"
-Write-host "URL: $fullUrl"
-
-$response = Invoke-WebRequest -Method GET -Uri $fullUrl -Headers @{"Content-Type" = "application/json"; "Authorization" = "Basic $jfToken" }
-
-if ($response.StatusCode -ne 200) {
-    Write-Error "Failed to call API: $($response.StatusDescription)"
-    exit 1
+if ([string]::IsNullOrWhiteSpace($jfUser) -or [string]::IsNullOrWhiteSpace($jfPassword) -or [string]::IsNullOrWhiteSpace($jfUrl)) {
+    throw "Set JFROG_USERNAME, JFROG_PASSWORD, and JFROG_URL before running this script."
 }
 
-$responseContent = $response
-$responseContent
+foreach ($path in $paths) {
+    Write-Host "Path: $path"
+    $jfToken = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $jfUser, $jfPassword)))
+    $fullUrl = "https://$jfUrl$jfUri/$path`?list&depth=1&listFolders=1&mdTimestamps=1&includeRootPath=0"
+    Write-Host "URL: $fullUrl"
 
+    $response = Invoke-WebRequest -Method Get -Uri $fullUrl -Headers @{ Authorization = "Basic $jfToken" }
+
+    if ($response.StatusCode -ne 200) {
+        throw "Failed to call API: $($response.StatusDescription)"
+    }
+
+    $responseObj = $response.Content | ConvertFrom-Json
+    $responseObj | ConvertTo-Json -Compress -Depth 100
 }

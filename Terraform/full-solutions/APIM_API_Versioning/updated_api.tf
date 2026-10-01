@@ -1,10 +1,18 @@
 ## Input Examples
 locals {
+<<<<<<< HEAD
+  apim_name                = "cpexampleapim"
+  apim_resource_group_name = "cp-example-rg"
+  api_name_prefix          = "cp-api-example"
+  api_version              = "1.6.0"
+  version_count_to_keep    = 5
+=======
   apim_name = "cpexampleapim"
   apim_resource_group_name = "cp-example-rg"
   api_name_prefix       = "cp-api-example"
   api_version = "1.6.0"
   version_count_to_keep = 5
+>>>>>>> main
 }
 
 data "azurerm_api_management" "apim" {

@@ -1,15 +1,34 @@
 **/node_modules
-**/*.pfx
-**/*.jks
 **/__pycache__
 **/zz_dummy_outputs
 
-# terraform directories
+# Secrets, certificates, keys, and local configuration
+.env
+.env.*
+!.env.example
+**/*.pfx
+**/*.p12
+**/*.pem
+**/*.key
+**/*.cer
+**/*.crt
+**/*.jks
+**/*.ini
+**/credentials
+**/credentials.*
+**/generated/
+
+# Terraform state and local working directories
 **/.terraform
 *.tfstate
 *.tfstate.*
+*.tfvars
+*.tfvars.json
 **/testing/
 **/Testing/
 
-# Visual studio stuff
+# Local tooling and operating-system files
 .vs/*
+.vscode/*
+.DS_Store
+Thumbs.db

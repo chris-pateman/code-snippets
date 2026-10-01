@@ -15,12 +15,12 @@ if [[ $certId != "" ]]; then
 
   if [[ $expiryDate -lt $today ]]; then
     echo "Certificate has expired"
-    $expired='true'
+    expired='true'
   else
     echo "Certificate has NOT expired"
   fi
 
 else
   echo "Certificate NOT Found"
-  $expired='true'
+  expired='true'
 fi

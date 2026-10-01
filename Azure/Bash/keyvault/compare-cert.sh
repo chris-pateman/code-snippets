@@ -1,10 +1,10 @@
 
 
-kvName="cp-sbox-kv"
-oid=$(oid)
-env="sbox"
-certName="STAR-sandbox-platform-cp-net"
-kvNamePrefix="cpapps"
+kvName="${KEY_VAULT_NAME:?Set KEY_VAULT_NAME before running this script}"
+oid="${OBJECT_ID:-}"
+env="${ENVIRONMENT:-sbox}"
+certName="${CERT_NAME:?Set CERT_NAME before running this script}"
+kvNamePrefix="${KEY_VAULT_PREFIX:-cpapps}"
 sourceKvName="$kvNamePrefix-$env"
 echo "Logged in as oid $oid"
 
@@ -25,19 +25,6 @@ else
     printf 'The file "%s" is different from "%s"\n' "$cpappsCert" "$cpCert"
 fi
 
-kvName="$(kvName)"
-oid=$(oid)
-env="${{ parameters.env }}"
-certName="${{ parameters.certName }}"
-kvNamePrefix="$(kv_name_prefix)"
-sourceKvName="$kvNamePrefix-$env"
-echo "Logged in as oid $oid"
-
-echo "Copy wildcard cert from cpapps"
-az keyvault secret download --id https://$sourceKvName.vault.azure.net/secrets/$certName -f cert.pfx
-
-base64 -d cert.pfx > cert-up.pfx
-
 import(){
     echo "Import the cert to our new KV $kvName"
     az keyvault certificate import --file cert-up.pfx --vault-name $kvName --name $certName --verbose
@@ -47,7 +34,7 @@ echo "Check if cert exists"
 kvSecret=$(az keyvault secret download --id https://$kvName.vault.azure.net/secrets/$certName --query "id")
 if [ $kvSecret = "" ]; then
     echo "Cert doesn't exist"
-    import() 
+    import
 fi
 if [ $kvSecret != "" ]; then
     echo "Cert exists"
@@ -59,7 +46,7 @@ if [ $kvSecret != "" ]; then
         echo "No Change in Cert"
     else
         echo "Change Required in Cert"
-        import()
+        import
     fi
 fi
 

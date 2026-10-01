@@ -1,0 +1,13 @@
+extends: relaxed
+
+rules:
+  indentation: disable
+  line-length: disable
+  commas: disable
+  new-lines:
+    level: error
+    type: unix
+  new-line-at-end-of-file:
+    level: error
+  trailing-spaces:
+    level: error
