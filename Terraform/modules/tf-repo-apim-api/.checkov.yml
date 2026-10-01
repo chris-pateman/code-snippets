@@ -6,6 +6,6 @@ skip-check:
   # Exclusion: checkov not detecting we are using versions in the source URL
   - CKV_TF_1
   - CKV_TF_2
-  # Issue: Ensure that the global security field has rules defined 
+  # Issue: Ensure that the global security field has rules defined
   # Exclusion: Security is handled by policy
   - CKV_OPENAPI_4

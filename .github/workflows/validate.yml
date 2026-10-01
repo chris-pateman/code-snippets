@@ -70,7 +70,7 @@ jobs:
 
       - name: Validate YAML files
         shell: bash
-        run: yamllint -d relaxed .
+        run: yamllint -c .yamllint .
 
       - name: Validate Terraform formatting
         uses: hashicorp/setup-terraform@v3
