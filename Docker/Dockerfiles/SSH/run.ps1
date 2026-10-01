@@ -1,0 +1,1 @@
+ docker run --env-file "$PSScriptRoot/env.list" -p 2222:2222 --hostname=openssh-server --name=openssh-server openssh

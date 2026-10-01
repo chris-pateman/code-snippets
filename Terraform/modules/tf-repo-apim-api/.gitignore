@@ -1,0 +1,30 @@
+# env declaration scripts
+env.*.sh
+.env
+
+#  Crash log files
+crash.log
+
+#  .vscode directories
+.vscode
+
+# Local .terraform
+**/.terraform/*
+tfplan
+*.tfvars.json
+.terraforn.lock.hcl
+**/.terraform.lock.hcl
+**/terraform.tfstate.backup
+**/terraform.tfstate
+
+#  Ignore CLI configuration files
+.terraformmrc
+terraform.rc
+
+# Used to override resources locally so should not be checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+.DS_Store

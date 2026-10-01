@@ -1,0 +1,15 @@
+// Get all resource groups
+ResourceContainers
+| where type == "microsoft.resources/subscriptions/resourcegroups"
+| project resourceGroup = name,
+          subscriptionId,
+          OwnersEmailAddress = tostring(tags["OwnersEmailAddress"])
+// Join resource counts
+| join kind=leftouter (
+    Resources
+    | summarize ResourceCount = count() by resourceGroup
+) on resourceGroup
+// Handle empty RGs
+| extend ResourceCount = coalesce(ResourceCount, 0)
+| project resourceGroup, ResourceCount, OwnersEmailAddress
+| order by ResourceCount desc
