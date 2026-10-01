@@ -1,0 +1,15 @@
+**/node_modules
+**/*.pfx
+**/*.jks
+**/__pycache__
+**/zz_dummy_outputs
+
+# terraform directories
+**/.terraform
+*.tfstate
+*.tfstate.*
+**/testing/
+**/Testing/
+
+# Visual studio stuff
+.vs/*

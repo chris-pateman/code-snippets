@@ -1,0 +1,16 @@
+
+
+## AZURE CLI
+#FROM mcr.microsoft.com/azure-cli:latest AS az-img
+
+
+FROM ghcr.io/linuxserver/openssh-server AS ssh-img
+COPY --from=mcr.microsoft.com/azure-cli:latest /usr/local/bin /usr/local/bin
+WORKDIR /app
+EXPOSE 2222
+
+RUN apk update && \
+  apk add bash py-pip && \
+  apk add --virtual=build gcc libffi-dev musl-dev openssl-dev python2-dev make && \\
+  pip install azure-cli && \
+  apk del --purge build

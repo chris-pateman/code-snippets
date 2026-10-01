@@ -1,0 +1,140 @@
+trigger:
+  - none
+
+parameters:
+  - name: serviceAbbreviatedName
+    displayName: Service Abbreviated Name
+    type: string
+  - name: environmentClass
+    displayName: Environment Class
+    type: string
+    values:
+      - pre
+      - prd
+      - tst
+      - dev
+  - name: tenant
+    displayName: The tenant to deploy the resources to
+    values:
+      - ot
+      - it
+  - name: regionAbbreviated
+    displayName: Azure region 'uks'
+    values:
+      - uks
+      - ukw
+
+variables:
+  orc_service_connection: "sc-prd-it-orchestration"
+  orc_ac_url: "https://ac-uks-prd-orc-01.azconfig.io"
+  srv_service_connection: "sc-prd-${{ parameters.tenant }}-orchestration"
+  environment_Class: ${{ parameters.environmentClass }}
+  region_Abbreviated: ${{ parameters.regionAbbreviated }}
+  service_name_abbreviated: ${{  lower(parameters.serviceAbbreviatedName) }}
+  tenant_name_abbreviated: ${{  lower(parameters.tenant) }}
+  ${{ if eq(parameters.regionAbbreviated, 'uks' ) }}:
+    region: "uksouth"
+  ${{ if eq(parameters.regionAbbreviated, 'ukw' ) }}:
+    region: "ukwest"
+
+steps:
+  - pwsh: |
+      $buildName = "DSH-${{ upper(parameters.serviceAbbreviatedName) }}-${{ upper(parameters.tenant) }}-${{ upper(parameters.environmentClass) }} - $(Build.BuildNumber)"
+      write-host "##vso[build.updatebuildnumber]$buildName"
+
+      $tag = "${{ upper(parameters.serviceAbbreviatedName) }}"
+      Write-Host "##vso[build.addbuildtag]$tag"
+      Write-Host "##vso[build.addbuildtag]check"
+
+  - task: AzureAppConfiguration@6
+    displayName: Get tenant level variables
+    inputs:
+      azureSubscription: ${{ variables.orc_service_connection }}
+      AppConfigurationEndpoint: ${{ variables.orc_ac_url }}
+      KeyFilter: "*"
+      Label: "${{parameters.tenant}}"
+
+  - task: AzureAppConfiguration@6
+    displayName: Get tenant level variables (including region)
+    inputs:
+      azureSubscription: ${{ variables.orc_service_connection }}
+      AppConfigurationEndpoint: ${{ variables.orc_ac_url }}
+      KeyFilter: "*"
+      Label: "${{parameters.tenant}}-${{parameters.regionAbbreviated}}"
+
+  - task: AzureAppConfiguration@6
+    displayName: Get service level variables
+    inputs:
+      azureSubscription: ${{ variables.srv_service_connection }}
+      AppConfigurationEndpoint: "https://ac-uks-prd-${{ parameters.serviceAbbreviatedName }}-${{ parameters.tenant }}-01.azconfig.io"
+      KeyFilter: "*"
+      Label: ""
+
+  - task: AzureAppConfiguration@6
+    displayName: Get environment level variables
+    inputs:
+      azureSubscription: ${{ variables.srv_service_connection }}
+      AppConfigurationEndpoint: "https://ac-uks-prd-${{ parameters.serviceAbbreviatedName }}-${{ parameters.tenant }}-01.azconfig.io"
+      KeyFilter: "*"
+      Label: "${{ parameters.tenant }}-${{ parameters.regionAbbreviated }}-${{ parameters.environmentClass }}-${{ parameters.serviceAbbreviatedName }}"
+
+  - task: replacetokens@5
+    displayName: Pipeline - Replace Tokens in .tfvars
+    inputs:
+      rootDirectory: "config"
+      targetFiles: "**/checks.tfvars"
+      encoding: "auto"
+      tokenPattern: "azpipelines"
+      writeBOM: true
+      actionOnMissing: "warn"
+      keepToken: false
+      actionOnNoFiles: "continue"
+      enableTransforms: false
+      enableRecursion: false
+      useLegacyPattern: false
+      enableTelemetry: true
+
+  - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@1
+    inputs:
+      terraformVersion: "1.7.0"
+
+  - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@2
+    inputs:
+      command: "init"
+      workingDirectory: "$(System.DefaultWorkingDirectory)/checks"
+      allowTelemetryCollection: false
+
+  - task: AzureCLI@2
+    displayName: Run checks
+    inputs:
+      azureSubscription: "${{ variables.srv_service_connection }}"
+      scriptType: "bash"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        # export TF_LOG="TRACE"
+        az account show
+        az account set -s $(hub_subscription_id)
+        terraform apply -auto-approve -state-out=test.tfstate -var-file=../config/checks.tfvars -var 'tenant=${{ parameters.tenant }}' -var 'region=${{ parameters.regionAbbreviated }}' -var 'environment=${{ parameters.environmentClass }}' -var 'service=${{ parameters.serviceAbbreviatedName }}'
+      workingDirectory: "$(System.DefaultWorkingDirectory)/checks"
+
+  - pwsh: |
+      $state = Get-Content .\checks\test.tfstate | ConvertFrom-Json
+      $checks = $state.check_results
+      $checks_failed = $false
+
+      foreach ($check in $checks) {
+          if ($($check.status) -eq "pass") {
+              Write-host "$($check.config_addr) ✔"
+          }
+          else {
+              $checks_failed = $true
+              Write-host "$($check.config_addr) ❌"
+              foreach ($msg in $($check.objects[0].failure_messages)) {
+                  Write-host "  - $($msg)"
+              }
+          }
+      }
+      if ($checks_failed) {
+        exit 1
+      }
+    displayName: Show results

@@ -1,0 +1,1 @@
+openssl ecparam -name secp256k1 -genkey --noout | openssl ec -text -noout >> keypair.prv

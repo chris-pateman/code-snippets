@@ -1,0 +1,3 @@
+**/.terraform
+**/override.tf
+**/plans/**

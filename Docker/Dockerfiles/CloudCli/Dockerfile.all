@@ -1,0 +1,28 @@
+## INSTALL SSH    
+FROM rastasheep/ubuntu-sshd:14.04 AS ssh-img
+
+ARG Provider
+
+## TEST VARIABLES
+RUN test -n "$Provider"
+RUN if [ "$Provider" != "azure" && "$Provider" != "aws" && "$Provider" != "gcp"] ; then \
+    echo "Provider needs to be either azure, aws or gcp" && exit 1 ; \
+    fi ;
+
+## INSTALL AZURE CLI
+RUN if [ "$Provider" = "azure" ] ; then \
+    apt update && apt install -y curl && curl -sL https://aka.ms/InstallAzureCLIDeb | bash ; \
+    fi
+
+## INSTALL AWS CLI
+RUN if [ "$Provider" = "aws" ] ; then \
+    apt update && apt install -y unzip curl && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install ; \
+    fi
+
+## INSTALL GCLOUD CLI
+RUN if [ "$Provider" = "gcp" ] ; then \
+    apt update && apt install -y curl && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - && apt-get update -y && apt-get install google-cloud-sdk -y --force-yes ; \
+    fi
+ 
+## INSTALL POWERSHELL
+RUN apt-get install -y wget apt-transport-https software-properties-common && wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb && dpkg -i packages-microsoft-prod.deb && apt-get update && apt-get install -y powershell \

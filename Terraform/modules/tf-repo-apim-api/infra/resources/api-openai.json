@@ -1,0 +1,329 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Databricks API",
+    "description": "API for interacting with Databricks workspace.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://adb-.7.azuredatabricks.net/api/2.0"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Job": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "integer",
+            "description": "The ID of the job."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the job."
+          },
+          "created_time": {
+            "type": "integer",
+            "description": "The time the job was created."
+          },
+          "creator_user_name": {
+            "type": "string",
+            "description": "The user who created the job."
+          },
+          "settings": {
+            "type": "object",
+            "description": "The job settings."
+          }
+        }
+      },
+      "Pipeline": {
+        "type": "object",
+        "properties": {
+          "pipeline_id": {
+            "type": "string",
+            "description": "The ID of the pipeline."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the pipeline."
+          },
+          "state": {
+            "type": "string",
+            "description": "The state of the pipeline."
+          }
+        }
+      },
+      "Catalog": {
+        "type": "object",
+        "properties": {
+          "catalog_id": {
+            "type": "string",
+            "description": "The ID of the catalog."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the catalog."
+          }
+        }
+      },
+      "Schema": {
+        "type": "object",
+        "properties": {
+          "schema_id": {
+            "type": "string",
+            "description": "The ID of the schema."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the schema."
+          }
+        }
+      },
+      "Table": {
+        "type": "object",
+        "properties": {
+          "table_id": {
+            "type": "string",
+            "description": "The ID of the table."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the table."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      },
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://example.com/oauth/authorize",
+            "tokenUrl": "https://example.com/oauth/token",
+            "scopes": {
+              "read": "Grants read access",
+              "write": "Grants write access"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/jobs/list": {
+      "get": {
+        "operationId": "jobslist",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "List jobs",
+        "tags": [
+          "jobs"
+        ],
+        "description": "Retrieve a list of jobs in the Databricks workspace.",
+        "responses": {
+          "200": {
+            "description": "A JSON array of job objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jobs": {
+                      "type": "array",
+                      "maxItems": 50,
+                      "items": {
+                        "$ref": "#/components/schemas/Job"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/get": {
+      "get": {
+        "operationId": "jobsget",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get job",
+        "tags": [
+          "jobs"
+        ],
+        "description": "Retrieve details of a specific job.",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A job object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/runnow": {
+      "post": {
+        "operationId": "jobsrun",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Run job now",
+        "tags": [
+          "jobs"
+        ],
+        "description": "Trigger a job run.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "job_id": {
+                    "type": "integer",
+                    "description": "The ID of the job to run."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job run triggered."
+          }
+        }
+      }
+    },
+    "/jobs/listruns": {
+      "get": {
+        "operationId": "jobslistruns",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "List job runs",
+        "tags": [
+          "jobs"
+        ],
+        "description": "Retrieve a list of job runs.",
+        "responses": {
+          "200": {
+            "description": "A JSON array of job run objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "runs": {
+                      "type": "array",
+                      "maxItems": 50,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "run_id": {
+                            "type": "integer",
+                            "description": "The ID of the run."
+                          },
+                          "job_id": {
+                            "type": "integer",
+                            "description": "The ID of the job."
+                          },
+                          "state": {
+                            "type": "string",
+                            "description": "The state of the run."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/getrun": {
+      "get": {
+        "operationId": "jobsgetrun",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get job run",
+        "tags": [
+          "jobs"
+        ],
+        "description": "Retrieve details of a specific job run.",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A job run object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run_id": {
+                      "type": "integer",
+                      "description": "The ID of the run."
+                    },
+                    "job_id": {
+                      "type": "integer",
+                      "description": "The ID of the job."
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "The state of the run."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

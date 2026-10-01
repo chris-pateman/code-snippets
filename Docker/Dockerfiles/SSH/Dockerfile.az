@@ -1,0 +1,21 @@
+FROM rastasheep/ubuntu-sshd:14.04 AS ssh-img
+WORKDIR /app
+EXPOSE 2222
+
+
+## INSTALL POWERSHELL
+RUN apt-get install -y wget apt-transport-https software-properties-common && dpkg -i packages-microsoft-prod.deb
+RUN apt-get update && apt-get install -y powershell
+RUN pwsh
+
+
+## INSTALL AZ CLI
+RUN apt update && apt install -y curl
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+## INSTALL GCLOUD CLI
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - && apt-get update -y && apt-get install google-cloud-sdk -y --force-yes
+
+## INSTALL AWS CLI
+RUN apt update && apt install -y unzip
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install

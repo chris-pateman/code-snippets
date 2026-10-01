@@ -1,0 +1,6 @@
+name,priority,direction,access,protocol,source_port_range,destination_port_range,source_address_prefix,destination_address_prefix,environment,nsg_name
+ssh,100,Inbound,Allow,Tcp,*,22,VirtualNetwork,*,*,hub
+rdp,101,Inbound,Allow,Tcp,*,3389,VirtualNetwork,*,*,hub
+sql,102,Inbound,Allow,Tcp,*,1433, SqlManagement,192.168.2.0/24,dev,spoke
+http-https,201,Inbound,Allow,Tcp,*,"80,443","1.2.3.4/32, 5.6.7.8/32",AzureLoadBalancer,*,spoke
+sql,102,Inbound,Allow,Tcp,*,1433, SqlManagement,192.168.3.0/24,test,spoke

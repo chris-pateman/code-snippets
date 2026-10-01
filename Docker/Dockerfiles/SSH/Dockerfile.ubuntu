@@ -1,0 +1,2 @@
+## INSTALL SSH    
+FROM rastasheep/ubuntu-sshd:14.04 AS ssh-img

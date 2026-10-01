@@ -1,0 +1,17 @@
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+#*.tfvars
+!**/resource-vars/*.tfvars
+
+# ignore the testing folder
+**/testing/
+**/Testing/
+
+# Visual studio stuff
+.vs/*
