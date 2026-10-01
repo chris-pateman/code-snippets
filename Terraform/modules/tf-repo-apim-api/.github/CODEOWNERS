@@ -1,0 +1,10 @@
+# Each line is a file pattern followed by one or more owners.
+
+# Default reviewers for all files
+* @bank-of-england-technology/maverick-alz-admin @bank-of-england-technology/edp-maintainer
+
+# Reviewers for specific directories
+# /docs/ @user @team
+
+# Reviewers for specific files
+# README.md @user2

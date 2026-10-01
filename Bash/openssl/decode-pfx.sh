@@ -1,0 +1,1 @@
+openssl pkcs12 -info -in "/mnt/c/Users/patemanc/AppData/Local/Temp/1/cvp-stg-kv-cvp-stg-le-cert-20220105.pfx.txt"
