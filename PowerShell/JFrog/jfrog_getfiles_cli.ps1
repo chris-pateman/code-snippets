@@ -2,12 +2,13 @@
 $path = "docker-sitecore-local/sitecore-xp1-cd-10.1.2-ltsc2019"
 
 
-$jfUser = "99999"
-$jfPassword = "******"
-
 $paths = @("docker-sitecore-local/sitecore-xp1-cd-10.1.2-ltsc2019")
 $includeFolders = $true
-$jfUrl = "binarycentral.jfrog.io"
+$jfUrl = $env:JFROG_URL
+
+if ([string]::IsNullOrWhiteSpace($jfUrl)) {
+    throw "Set JFROG_URL before running this script. Authenticate the JFrog CLI separately."
+}
 
 
 foreach ($path in $paths ) {
