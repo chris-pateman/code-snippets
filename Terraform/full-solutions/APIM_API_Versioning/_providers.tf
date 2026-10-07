@@ -39,5 +39,4 @@ provider "azurerm" {
       purge_soft_deleted_certificates_on_destroy = false
     }
   }
-  skip_provider_registration = "true"
 }
